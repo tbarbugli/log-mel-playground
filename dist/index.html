@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#07111e" />
+    <meta name="description" content="A local, real-time Log-Mel audio feature explorer." />
+    <title>Fieldnotes — Log-Mel Explorer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Fieldnotes home">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+          <span>fieldnotes<span class="brand-dot">.</span></span>
+        </a>
+        <div class="topbar-meta"><span class="product-name">AUDIO LAB <b>/</b> 01</span><span class="local-badge"><span></span> LOCAL PROCESSING</span></div>
+        <button class="icon-button help-button" id="aboutButton" aria-label="About Log-Mel features" title="About this explorer">?</button>
+      </header>
+
+      <main>
+        <section class="intro-row">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span> FEATURE EXPLORER</div>
+            <h1>Hear the shape<br class="mobile-break" /> of a sound.</h1>
+            <p class="intro-copy">Watch raw audio become a compact map of frequency and time.<br class="desktop-break" /> Your signal stays right here in this tab.</p>
+          </div>
+          <div class="live-readout" aria-live="polite">
+            <span class="live-label"><i class="live-dot" id="liveDot"></i><span id="liveStatus">STANDING BY</span></span>
+            <span class="clock-readout" id="elapsed">00:00.0</span>
+          </div>
+        </section>
+
+        <section class="instrument-card" aria-label="Log-Mel spectrogram explorer">
+          <div class="instrument-toolbar">
+            <div class="view-title"><span class="tiny-mark">▥</span><div><strong>Log-Mel spectrogram</strong><span id="captureLabel">Awaiting signal</span></div></div>
+            <div class="toolbar-actions">
+              <button class="button button-quiet" id="freezeButton" disabled><span class="freeze-icon">Ⅱ</span><span>Freeze</span></button>
+              <button class="button button-primary" id="startButton"><span class="mic-icon" aria-hidden="true">●</span><span>Start microphone</span></button>
+            </div>
+          </div>
+
+          <div class="plot-layout">
+            <div class="axis-y" aria-hidden="true"><span class="axis-title">FREQUENCY</span><span class="axis-mode">MEL / Hz</span><span class="freq-label" data-hz="8000">8k</span><span class="freq-label" data-hz="4000">4k</span><span class="freq-label" data-hz="2000">2k</span><span class="freq-label" data-hz="1000">1k</span><span class="freq-label" data-hz="500">500</span><span class="freq-label" data-hz="100">100</span><span class="freq-label" data-hz="50">50</span></div>
+            <div class="plot-wrap">
+              <canvas id="spectrogram" aria-label="Live Log-Mel spectrogram. Horizontal axis is time, vertical axis is frequency on a Mel scale." role="img"></canvas>
+              <div class="plot-empty" id="emptyState"><div class="empty-orbit"><span>♪</span></div><strong>Your sound goes here</strong><span>Start with a mic or explore the demo signal.</span><button class="demo-inline" id="demoInline">Run the demo <span>↗</span></button></div>
+              <div class="plot-overlay"><span class="overlay-tag"><i></i> LIVE SPECTRUM</span><span class="overlay-window" id="windowLabel">3.00 S WINDOW</span></div>
+              <div class="crosshair" id="crosshair" aria-hidden="true"><span id="crosshairValue"></span></div>
+              <div class="time-ticks" aria-hidden="true"><span>−3.0 s</span><span>−2.0 s</span><span>−1.0 s</span><span>NOW</span></div>
+            </div>
+            <div class="db-scale"><span>0</span><div class="scale-ramp"></div><span id="dbFloor">−72</span><small>dB</small></div>
+          </div>
+
+          <div class="metrics-row">
+            <div class="metric"><span class="metric-label">PEAK BAND</span><strong id="peakValue">— <small>Hz</small></strong></div>
+            <div class="metric"><span class="metric-label">MEL-WEIGHTED CENTROID</span><strong id="centroidValue">— <small>Hz</small></strong></div>
+            <div class="metric"><span class="metric-label">INPUT LEVEL</span><div class="level-metric"><strong id="levelValue">— <small>dBFS</small></strong><span class="level-track"><i id="levelBar"></i></span></div></div>
+            <div class="metric metric-end"><span class="metric-label">ANALYSIS RATE</span><strong><span id="rateValue">—</span> <small>FPS</small></strong></div>
+          </div>
+        </section>
+
+        <section class="controls-explainer">
+          <div class="controls-card">
+            <div class="section-heading"><span class="section-index">01</span><div><h2>Signal controls</h2><p>Shape the view without changing the audio.</p></div></div>
+            <div class="range-control"><label for="rangeSlider"><span>Dynamic range</span><strong><span id="rangeValue">72</span> dB</strong></label><input id="rangeSlider" type="range" min="36" max="96" value="72" /><div class="range-ends"><span>DETAIL</span><span>CONTRAST</span></div></div>
+            <div class="range-control gain-control"><label for="gainSlider"><span>Display gain</span><strong><span id="gainValue">1.0</span>×</strong></label><input id="gainSlider" type="range" min="0.5" max="2" value="1" step="0.1" /><div class="range-ends"><span>QUIETER</span><span>BRIGHTER</span></div></div>
+            <div class="source-controls">
+              <button class="button button-demo" id="demoButton"><span class="play-icon">▶</span> Try a demo signal</button>
+              <span class="source-caption">A 220 Hz tone with a sweeping overtone</span>
+            </div>
+            <p class="permission-note"><span class="lock-icon">⌑</span> Microphone access is only used after you press Start.</p>
+          </div>
+          <article class="explainer-card">
+            <div class="section-heading"><span class="section-index lime-index">02</span><div><h2>What am I seeing?</h2><p>A closer look at the sound.</p></div></div>
+            <p class="explainer-text">The <strong>Log-Mel spectrogram</strong> breaks audio into tiny overlapping slices, then measures energy across Mel-spaced frequency bands. Mel spacing gives more room to the pitches we hear most clearly.</p>
+            <div class="pipeline" aria-label="Audio processing steps"><span>WAVEFORM</span><b>→</b><span>FFT</span><b>→</b><span class="pipeline-active">MEL FILTERS</span><b>→</b><span>dB</span></div>
+            <div class="legend"><span class="legend-swatch"></span><span>Less energy</span><div class="legend-gradient"></div><span>More energy</span></div>
+          </article>
+        </section>
+        <footer><span>FIELDNOTES <b>·</b> AUDIO LAB</span><span>BUILT FOR LISTENING CLOSELY <i>✳</i></span></footer>
+      </main>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <dialog id="aboutDialog"><button class="dialog-close" id="dialogClose" aria-label="Close">×</button><div class="eyebrow"><span class="eyebrow-line"></span> THE SHORT VERSION</div><h2>Log-Mel, in a nutshell.</h2><p>Audio is framed into 2,048-sample windows with a Hann taper, transformed with an FFT, then pooled through 64 overlapping triangular filters spaced on the HTK Mel scale. The displayed color is 10 × log₁₀ of each band's power.</p><p>Frames arrive every 10 ms. With a 2,048-sample window, each frame covers about 46 ms at 44.1 kHz. All processing happens in your browser using an AudioWorklet.</p><button class="button button-primary" id="dialogOk">Got it</button></dialog>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
